@@ -10,7 +10,6 @@
         $(document).ready(function () {
             $("#searchfield").autocomplete({
                 source: function (request, response) {
-                    console.log(request.term);
                     $.ajax({
                         cache: true,
                         dataType: 'jsonp',
@@ -20,25 +19,33 @@
                         jsonp: false,
                         jsonpCallback: 'search_suggestions_callback',
                         success: function (data) {
+                            console.log(data);
                             var suggestions = [];
                             $.each(data[1], function (key, val) {
                                 suggestions.push(val);
                             });
                             response(suggestions);
-                            console.log(suggestions);
                         },
                         url: window.location.protocol + '//zoeksuggesties.s-bol.com/extern/qs/OpenSearchJSCB/search_suggestions_callback/media_all/' + encodeURIComponent(request.term)
                     });
+                },
+                select: function(event, ui) {
+                    //assign value back to the form element
+                    if(ui.item){
+                        $(event.target).val(ui.item.value);
+                    }
+                    //submit the form
+                    $(event.target.form).submit();
                 }
             });
         });
         </script>
     </head>
     <body>
-    <form method="GET" action="http://developers.bol.com/voorbeeldcode/php/">
+    <form>
         <input type="hidden" name="action" value="searchresults" />
         <input type="text" id="searchfield" name="term" />
-        <input type="submit" value="Search" />
+        <input type="submit" value="Search" id="search" />
     </form>
     </body>
 </html>
